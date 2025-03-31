@@ -46,6 +46,8 @@ library(metid)
 # save(fpa_result, file = "fpa_result.rda")
 load("fpa_result.rda")
 
+length(unique(fpa_result$annotation_table$variable_id)) / 1044
+
 library(metpath)
 
 fpa_result$enriched_pathways@result %>% dplyr::filter(p_value_adjust < 0.05) %>%
@@ -55,8 +57,8 @@ plot_with_feature <-
   plot_metabolic_network_fpa(
     fpa_result = fpa_result,
     feature_table_marker = feature_table_marker,
-    include_feature = FALSE,
-    node_color_by_module = TRUE,
+    include_feature = TRUE,
+    node_color_by_module = FALSE,
     include_hidden_metabolites = FALSE,
     add_compound_name = TRUE
   )
@@ -109,10 +111,10 @@ marker_with_ms2_annotation %>%
 plot <-
   enrich_scatter_plot(fpa_result$enriched_pathways)
 plot
-ggsave(plot,
-       filename = "all_pathways_enrich_scatter_plot.pdf",
-       width = 8,
-       height = 5)
+# ggsave(plot,
+#        filename = "all_pathways_enrich_scatter_plot.pdf",
+#        width = 8,
+#        height = 5)
 
 
 plot_without_feature <-
@@ -131,12 +133,12 @@ plot_without_feature
 library(extrafont)
 loadfonts()
 
-ggsave(
-  plot_without_feature,
-  filename = "plot_without_feature.pdf",
-  width = 14,
-  height = 10
-)
+# ggsave(
+#   plot_without_feature,
+#   filename = "plot_without_feature.pdf",
+#   width = 14,
+#   height = 10
+# )
 
 plot_metabolic_module_fpa(
   fpa_result = fpa_result,
@@ -157,6 +159,7 @@ annotation_table <-
 
 library(plyr)
 library(tidymass)
+
 expression_data <-
   urine_metabolomics_data %>%
   scale_data(center = FALSE) %>%
@@ -286,8 +289,6 @@ temp_data$non <-
     max(temp_data$increase + temp_data$decrease) - sum(x)
   })
 
-
-
 plot2 <-
   temp_data %>%
   rownames_to_column(var = "module_name") %>%
@@ -315,6 +316,8 @@ plot2 <-
   labs(x = "")
 
 plot2
+
+library(tibble)
 
 plot3 <-
   module_quantitative_data %>%
@@ -351,33 +354,202 @@ plot <-
   plot2 + plot3 + plot1 + plot_layout(ncol = 1, heights = c(1, 1, 2))
 
 
-ggsave(plot,
-       filename = "module_quantative_score.pdf",
-       width = 8,
-       height = 8)
+# ggsave(plot,
+#        filename = "module_quantative_score.pdf",
+#        width = 8,
+#        height = 8)
+
+# for (i in 1:27) {
+#   cat(i, " ")
+#   plot <-
+#     plot_metabolic_module_fpa(
+#       fpa_result = fpa_result,
+#       feature_table_marker = feature_table_marker,
+#       include_feature = TRUE,
+#       include_hidden_metabolites = FALSE,
+#       add_compound_name = TRUE,
+#       metabolic_module_index = i,
+#       layout = "fr",
+#       add_pathways = TRUE
+#     )
+#   plot
+#   ggsave(
+#     plot,
+#     filename = paste0("module_", i, ".pdf"),
+#     width = 14,
+#     height = 8
+#   )
+# }
 
 
 
+temp_data <-
+  fpa_result$dysregulated_metabolic_module$Total_metabolite_id[fpa_result$dysregulated_metabolic_module$p_value < 0.05] %>%
+  purrr::map(function(x) {
+    KEGG_ID <-
+      stringr::str_split(x, pattern = "\\{\\}") %>%
+      unlist()
+    
+    temp_data <-
+      data.frame(KEGG.ID = KEGG_ID) %>%
+      dplyr::left_join(annotation_table[, c("variable_id",
+                                            "KEGG.ID",
+                                            "compound_class",
+                                            "Adduct",
+                                            "isotope",
+                                            "score")], by = "KEGG.ID") %>%
+      dplyr::arrange(KEGG.ID) %>%
+      dplyr::distinct(KEGG.ID, variable_id, compound_class, .keep_all = TRUE) %>%
+      dplyr::filter(!is.na(variable_id)) %>%
+      plyr::dlply(.variables = .(KEGG.ID)) %>%
+      purrr::map(function(y) {
+        if (max(y$score) >= 80) {
+          y <-
+            y %>%
+            dplyr::filter(score >= 80)
+        }
+        
+        remain_compound_class <-
+          y %>%
+          dplyr::count(compound_class) %>%
+          dplyr::filter(n > 1) %>%
+          pull(compound_class)
+        
+        
+        if (length(remain_compound_class) > 0) {
+          y <-
+            y %>% dplyr::filter(compound_class %in% remain_compound_class)
+        }
+        y %>%
+          dplyr::filter(isotope == "[M]")
+      })
+    
+    remain_idx <-
+      temp_data %>%
+      lapply(nrow) %>%
+      unlist() %>%
+      `>`(0) %>%
+      which()
+    
+    temp_data <-
+      temp_data[remain_idx]
+    
+    variable_id <-
+      temp_data %>%
+      do.call(rbind, .) %>%
+      as.data.frame() %>%
+      dplyr::distinct(variable_id, .keep_all = TRUE) %>%
+      pull(variable_id)
+    
+    expression_data[variable_id, ] %>%
+      colSums()
+  }) %>%
+  do.call(rbind, .) %>%
+  as.data.frame()
+
+rownames(temp_data) <-
+  fpa_result$dysregulated_metabolic_module$Name[fpa_result$dysregulated_metabolic_module$p_value < 0.05]
+
+temp_data <-
+  temp_data %>%
+  apply(1, function(x) {
+    (x - mean(x)) / sd(x)
+  }) %>%
+  t() %>%
+  as.data.frame() %>%
+  tibble::rownames_to_column(var = "module_name") %>%
+  tidyr::pivot_longer(cols = -module_name,
+                      names_to = "sample_id",
+                      values_to = "intensity") %>%
+  dplyr::left_join(urine_metabolomics_data@sample_info[, c("sample_id", "ga_range")], by = "sample_id") %>%
+  dplyr::filter(!is.na(ga_range)) %>%
+  dplyr::group_by(module_name, ga_range) %>%
+  dplyr::summarise(intensity = mean(intensity)) %>%
+  dplyr::mutate(ga_range = factor(ga_range, levels = factor(
+    ga_range, stringr::str_sort(unique(ga_range), numeric = TRUE)
+  ))) %>%
+  dplyr::mutate(module_name = factor(module_name, levels = stringr::str_sort(unique(module_name), numeric = TRUE)))
+
+plot <-
+  temp_data %>%
+  ggplot(aes(ga_range, intensity)) +
+  geom_line(aes(group = module_name, color = module_name)) +
+  geom_point(aes(color = module_name), size = 2) +
+  theme_bw() +
+  scale_color_manual(values = colorRampPalette(ggsci::pal_aaas("default")(10))(27)) +
+  theme(legend.position = "bottom",
+        axis.text.x = element_text(angle = 45, hjust = 1)) +
+  labs(x = "GA range", y = "Z-score")
+
+plot
+
+# ggsave(plot,
+#        filename = "module_quantitative_plot.pdf",
+#        width = 10,
+#        height = 9)
 
 
-for (i in 1:27) {
-  cat(i, " ")
-  plot <-
-    plot_metabolic_module_fpa(
-      fpa_result = fpa_result,
-      feature_table_marker = feature_table_marker,
-      include_feature = TRUE,
-      include_hidden_metabolites = FALSE,
-      add_compound_name = TRUE,
-      metabolic_module_index = i,
-      layout = "fr",
-      add_pathways = TRUE
-    )
-  plot
-  ggsave(
-    plot,
-    filename = paste0("module_", i, ".pdf"),
-    width = 14,
-    height = 8
-  )
-}
+####heatmap
+temp_data2 <-
+  temp_data %>% 
+  tidyr::pivot_wider(names_from = ga_range, values_from = intensity) %>% 
+  tibble::column_to_rownames(var = "module_name")
+
+library(ComplexHeatmap)
+
+Heatmap(temp_data2,
+        cluster_columns = FALSE,
+        row_km = 2)
+
+
+#####module network
+temp_data2 <-
+  temp_data %>%
+  tidyr::pivot_wider(names_from = ga_range, values_from = intensity) %>%
+  tibble::column_to_rownames(var = "module_name")
+
+
+###correlations between modules, and p values
+correlation_data <-
+  temp_data2 %>%
+  t() %>%
+  cor(method = "spearman") %>%
+  as.data.frame() %>%
+  tibble::rownames_to_column(var = "module_name") %>%
+  tidyr::pivot_longer(cols = -module_name,
+                      names_to = "module_name2",
+                      values_to = "correlation") %>%
+  dplyr::filter(module_name != module_name2)
+
+p_value <-
+  seq_len(nrow(correlation_data)) %>%
+  purrr::map(function(i) {
+    cor.test(as.numeric(temp_data2[correlation_data$module_name[i], ]), as.numeric(temp_data2[correlation_data$module_name2[i], ]), method = "spearman")$p.value
+  }) %>%
+  unlist()
+
+
+correlation_data$p_value <- p_value
+correlation_data$p_adjust <- p.adjust(p_value, method = "fdr")
+
+edge_data <-
+  correlation_data %>%
+  dplyr::filter(p_adjust < 0.05) %>%
+  dplyr::mutate(abs(correlation) > 0.5)
+
+node_data <-
+  data.frame(id = unique(c(
+    edge_data$module_name, edge_data$module_name2
+  )), class = "module")
+
+
+library(tidygraph)
+library(ggraph)
+
+temp_graph <-
+  tbl_graph(nodes = node_data, edges = edge_data)
+
+temp_graph %>%
+  ggraph(layout = "fr") +
+  geom_edge_link(aes(color = correlation, size = -log(p_adjust, 10)), show.legend = FALSE) +
+  geom_node_point(size = 5)

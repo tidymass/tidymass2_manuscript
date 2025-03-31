@@ -10,7 +10,6 @@ load(
 load("3_data_analysis/1_smartd_project_data_preparation/kegg_hsa_pathway.rda")
 load("3_data_analysis/1_smartd_project_data_preparation/kegg_compound_database.rda")
 
-
 dir.create("3_data_analysis/2_smartd_project_heatmap", showWarnings = FALSE)
 setwd("3_data_analysis/2_smartd_project_heatmap")
 
@@ -77,7 +76,6 @@ marker_up <-
 marker_down <-
   feature_table_marker %>%
   dplyr::filter(degree < 0)
-
 
 dim(marker_up)
 dim(marker_down)
@@ -185,9 +183,12 @@ temp_data <-
   feature_table_marker %>%
   dplyr::mutate(direction = case_when(degree > 0 ~ "up", degree < 0 ~ "down"))
 
-sum(temp_data$direction == "up" & temp_data$recovery_score > 1)/sum(temp_data$direction == "up")
-sum(temp_data$direction == "up" & temp_data$recovery_score <= 1)/sum(temp_data$direction == "up")
+sum(temp_data$direction == "up" &
+      temp_data$recovery_score > 1) / sum(temp_data$direction == "up")
+sum(temp_data$direction == "up" &
+      temp_data$recovery_score <= 1) / sum(temp_data$direction == "up")
 
-
-sum(temp_data$direction == "down" & temp_data$recovery_score > 1)/sum(temp_data$direction == "down")
-sum(temp_data$direction == "down" & temp_data$recovery_score <= 1)/sum(temp_data$direction == "down")
+sum(temp_data$direction == "down" &
+      temp_data$recovery_score > 1) / sum(temp_data$direction == "down")
+sum(temp_data$direction == "down" &
+      temp_data$recovery_score <= 1) / sum(temp_data$direction == "down")
