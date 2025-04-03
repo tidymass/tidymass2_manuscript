@@ -192,3 +192,4 @@ sum(temp_data$direction == "down" &
       temp_data$recovery_score > 1) / sum(temp_data$direction == "down")
 sum(temp_data$direction == "down" &
       temp_data$recovery_score <= 1) / sum(temp_data$direction == "down")
+

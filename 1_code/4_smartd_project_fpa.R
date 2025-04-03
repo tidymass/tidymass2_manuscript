@@ -491,15 +491,13 @@ plot
 
 ####heatmap
 temp_data2 <-
-  temp_data %>% 
-  tidyr::pivot_wider(names_from = ga_range, values_from = intensity) %>% 
+  temp_data %>%
+  tidyr::pivot_wider(names_from = ga_range, values_from = intensity) %>%
   tibble::column_to_rownames(var = "module_name")
 
 library(ComplexHeatmap)
 
-Heatmap(temp_data2,
-        cluster_columns = FALSE,
-        row_km = 2)
+Heatmap(temp_data2, cluster_columns = FALSE, row_km = 2)
 
 
 #####module network

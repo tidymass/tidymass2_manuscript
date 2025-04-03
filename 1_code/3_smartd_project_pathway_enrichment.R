@@ -1,5 +1,6 @@
 library(r4projects)
 setwd(get_project_wd())
+rm(list = ls())
 # source("R/enrich_pathways.R")
 # source("R/7_utils.R")
 # source("R/11_feature_based_pathway_enrichment.R")
@@ -12,7 +13,6 @@ load(
   "3_data_analysis/1_smartd_project_data_preparation/urine_metabolomics_data.rda"
 )
 load("3_data_analysis/1_smartd_project_data_preparation/kegg_hsa_pathway.rda")
-load("3_data_analysis/1_smartd_project_data_preparation/kegg_compound_database.rda")
 
 dir.create("3_data_analysis/3_smartd_project_pathway_enrichment",
            showWarnings = FALSE)
@@ -47,7 +47,7 @@ load("result_kegg.rda")
 enrich_bar_plot(result_kegg)
 
 pathway_class =
-  metpath::pathway_class(hmdb_pathway)
+  hmdb_pathway@pathway_class
 
 remain_idx = which(unlist(pathway_class) == "Metabolic;primary_pathway")
 
@@ -77,18 +77,18 @@ plot1 <-
   enrich_scatter_plot(result_kegg)
 plot1
 
-ggsave(plot1,
-       filename = "kegg_enrichment.pdf",
-       width = 5,
-       height = 4)
+# ggsave(plot1,
+#        filename = "kegg_enrichment.pdf",
+#        width = 5,
+#        height = 4)
 
 plot2 <-
   enrich_scatter_plot(result_hmdb)
 plot
-ggsave(plot2,
-       filename = "hmdb_enrichment.pdf",
-       width = 5,
-       height = 4)
+# ggsave(plot2,
+#        filename = "hmdb_enrichment.pdf",
+#        width = 5,
+#        height = 4)
 
 result_kegg@result %>%
   dplyr::filter(p_value_adjust < 0.05)
@@ -166,14 +166,12 @@ node1 <-
     class = c("Pathway", rep("metabolite", length(id1)))
   )
 
-
 edge2 <-
   data.frame(from = "Steroidogenesis", to = id2, class = 'HMDB')
 
 node2 <-
   data.frame(id = c("Steroidogenesis", id2),
              class = c("Pathway", rep("metabolite", length(id2))))
-
 
 edge <- rbind(edge1, edge2)
 node <- rbind(node1, node2) %>%
@@ -198,4 +196,4 @@ plot <-
 plot
 library(extrafont)
 loadfonts()
-ggsave(plot, filename = "pathway_network.pdf", width = 7, height = 6)
+# ggsave(plot, filename = "pathway_network.pdf", width = 7, height = 6)

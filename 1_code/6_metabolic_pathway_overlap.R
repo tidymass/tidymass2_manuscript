@@ -8,7 +8,6 @@ load("2_data/metabolic_pathways/kegg_hsa_pathway.rda")
 load("2_data/metabolic_pathways/reactome_hsa_pathway.rda")
 load("2_data/metabolic_pathways/wikipathway_hsa_pathway.rda")
 
-
 dir.create("3_data_analysis/5_metabolic_pathway_overlap",
            showWarnings = FALSE)
 setwd("3_data_analysis/5_metabolic_pathway_overlap")
@@ -23,8 +22,6 @@ remain_idx <-
 
 kegg_hsa_pathway <-
   filter_pathway(object = kegg_hsa_pathway, remain_idx = remain_idx)
-
-
 
 ####hmdb_pathway
 remain_idx <-
