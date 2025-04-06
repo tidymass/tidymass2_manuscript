@@ -19,6 +19,9 @@ setwd(get_project_wd())
 load("3_data_analysis/1_smartd_project_data_preparation/feature_table_all.rda")
 load("3_data_analysis/1_smartd_project_data_preparation/feature_table_marker.rda")
 load("3_data_analysis/1_smartd_project_data_preparation/metabolic_network.rda")
+
+
+
 load(
   "3_data_analysis/1_smartd_project_data_preparation/urine_metabolomics_data.rda"
 )
@@ -27,6 +30,19 @@ load("3_data_analysis/1_smartd_project_data_preparation/kegg_compound_database.r
 
 dir.create("3_data_analysis/4_smartd_project_fpa", showWarnings = FALSE)
 setwd("3_data_analysis/4_smartd_project_fpa")
+
+library(tidygraph)
+library(ggraph)
+
+temp <-
+metabolic_network %>% 
+  activate(nodes) %>% 
+  as_tibble() %>% 
+  pull(degree)
+
+sum(temp <=10)/length(temp)
+
+
 
 library(metid)
 
