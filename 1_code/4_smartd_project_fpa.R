@@ -35,12 +35,12 @@ library(tidygraph)
 library(ggraph)
 
 temp <-
-metabolic_network %>% 
-  activate(nodes) %>% 
-  as_tibble() %>% 
+  metabolic_network %>%
+  activate(nodes) %>%
+  as_tibble() %>%
   pull(degree)
 
-sum(temp <=10)/length(temp)
+sum(temp <= 10) / length(temp)
 
 
 
@@ -61,6 +61,10 @@ library(metid)
 #
 # save(fpa_result, file = "fpa_result.rda")
 load("fpa_result.rda")
+
+write.csv(fpa_result$dysregulated_metabolic_module[,c("Name", "p_value", "Total_metabolite_number", "Total_metabolite_id")] %>% 
+            dplyr::filter(p_value < 0.05), 
+          file = "fpa_result_dysregulated_metabolic_module.csv")
 
 length(unique(fpa_result$annotation_table$variable_id)) / 1044
 
@@ -126,6 +130,12 @@ marker_with_ms2_annotation %>%
 ###all enriched pathways
 plot <-
   enrich_scatter_plot(fpa_result$enriched_pathways)
+
+
+write.csv(fpa_result$enriched_pathways@result[,c("pathway_id", "pathway_name", "p_value_adjust", "mapped_id")] %>% 
+            dplyr::filter(p_value_adjust < 0.05), 
+          file = "fpa_result_enriched_pathways.csv")
+
 plot
 # ggsave(plot,
 #        filename = "all_pathways_enrich_scatter_plot.pdf",
@@ -305,6 +315,9 @@ temp_data$non <-
     max(temp_data$increase + temp_data$decrease) - sum(x)
   })
 
+
+library(tibble)
+
 plot2 <-
   temp_data %>%
   rownames_to_column(var = "module_name") %>%
@@ -369,34 +382,51 @@ library(patchwork)
 plot <-
   plot2 + plot3 + plot1 + plot_layout(ncol = 1, heights = c(1, 1, 2))
 
-
 # ggsave(plot,
 #        filename = "module_quantative_score.pdf",
 #        width = 8,
 #        height = 8)
 
-# for (i in 1:27) {
-#   cat(i, " ")
-#   plot <-
-#     plot_metabolic_module_fpa(
-#       fpa_result = fpa_result,
-#       feature_table_marker = feature_table_marker,
-#       include_feature = TRUE,
-#       include_hidden_metabolites = FALSE,
-#       add_compound_name = TRUE,
-#       metabolic_module_index = i,
-#       layout = "fr",
-#       add_pathways = TRUE
-#     )
-#   plot
-#   ggsave(
-#     plot,
-#     filename = paste0("module_", i, ".pdf"),
-#     width = 14,
-#     height = 8
-#   )
-# }
+for (i in 1:27) {
+  cat(i, " ")
+  plot <-
+    plot_metabolic_module_fpa(
+      fpa_result = fpa_result,
+      feature_table_marker = feature_table_marker,
+      include_feature = TRUE,
+      include_hidden_metabolites = FALSE,
+      add_compound_name = TRUE,
+      metabolic_module_index = i,
+      layout = "fr",
+      add_pathways = TRUE
+    )
+  plot
+  ggsave(
+    plot,
+    filename = paste0("module_", i, ".pdf"),
+    width = 14,
+    height = 8
+  )
+}
 
+idx <- 4
+
+kegg_id <-
+  stringr::str_split(fpa_result$dysregulated_metabolic_module$Total_metabolite_id[idx],
+                     "\\{\\}") %>%
+  `[[`(1) %>%
+  unique()
+
+length(kegg_id)
+
+fpa_result$annotation_table %>%
+  dplyr::filter(KEGG.ID %in% kegg_id) %>%
+  pull(variable_id) %>%
+  unique() %>%
+  length()
+
+
+fpa_result$enriched_pathways_list[[idx]]@result[, c("pathway_name", "p_value_adjust")] %>% head(10)
 
 
 temp_data <-
@@ -505,6 +535,7 @@ plot
 #        height = 9)
 
 
+
 ####heatmap
 temp_data2 <-
   temp_data %>%
@@ -561,9 +592,18 @@ library(tidygraph)
 library(ggraph)
 
 temp_graph <-
-  tbl_graph(nodes = node_data, edges = edge_data)
+  tbl_graph(nodes = node_data, edges = edge_data) %>%
+  dplyr::mutate(degree = centrality_degree(mode = "all"))
 
-temp_graph %>%
+plot <-
+  temp_graph %>%
   ggraph(layout = "fr") +
-  geom_edge_link(aes(color = correlation, size = -log(p_adjust, 10)), show.legend = FALSE) +
-  geom_node_point(size = 5)
+  geom_edge_link(aes(color = correlation, size = -log(p_adjust, 10)), show.legend = TRUE) +
+  geom_node_point(aes(size = degree)) +
+  theme_graph() +
+  coord_fixed()
+plot
+ggsave(plot,
+       filename = "module_network.pdf",
+       width = 10,
+       height = 10)
