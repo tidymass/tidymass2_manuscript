@@ -13,7 +13,7 @@ All the code used to generate the figures and tables in the manuscript.
 All the raw data used to generate the figures and tables in the manuscript.
 
 > 2_data folder is too large to upload to GitHub. 
-You can download the data from [Google Drive](https://drive.google.com/drive/folders/1q0aX2v3r7g4xk5b6c8f9j4z5h8g5h5h?usp=sharing) or [Zenodo](https://zenodo.org/record/8031237) 💾.
+You can download the data from [Google Drive](https://drive.google.com/drive/folders/1q0aX2v3r7g4xk5b6c8f9j4z5h8g5h5h?usp=sharing) 💾.
 
 ## 3_data_analysis 
 
