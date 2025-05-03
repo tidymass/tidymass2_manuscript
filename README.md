@@ -8,18 +8,18 @@ There are 5 folders in this repository:
 
 All the code used to generate the figures and tables in the manuscript.
 
-2_data 
+## 2_data 
 
 All the raw data used to generate the figures and tables in the manuscript.
 
-3_data_analysis 
+## 3_data_analysis 
 
 All the data analysis results used to generate the figures and tables in the manuscript.
 
-4_manuscript 
+## 4_manuscript 
 
 The figures and supplementary figures.
 
-5_summary 
+## 5_summary 
 
 The summary of the project.
