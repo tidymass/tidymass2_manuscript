@@ -23,3 +23,19 @@ The figures and supplementary figures.
 ## 5_summary 
 
 The summary of the project.
+
+## Packages you need to install before run the code
+
+```r
+if (!requireNamespace("remotes", quietly = TRUE)){
+install.packages("remotes")
+}
+
+if (!requireNamespace("r4projects", quietly = TRUE)){
+remotes::install_github("jaspershen-lab/r4projects")
+}
+
+if (!requireNamespace("tidymass", quietly = TRUE)){
+remotes::install_github("tidymass/tidymass")
+}
+```
