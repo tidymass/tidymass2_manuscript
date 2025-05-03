@@ -1,6 +1,6 @@
 # Code for tidymass2 manuscript
 
-![](4_manuscript/Figures/Figure_1.png)
+![](4_manuscript/Figures/Figure_1/Figure_1.png)
 
 There are 5 folders in this repository:
 
