@@ -1,0 +1,15 @@
+INFO [2025-03-31 11:19:11] $x
+INFO [2025-03-31 11:19:11] list(identified_down_marker, down_marker)
+INFO [2025-03-31 11:19:11] 
+INFO [2025-03-31 11:19:11] $category.names
+INFO [2025-03-31 11:19:11] c("Identified", "All down metabolic features")
+INFO [2025-03-31 11:19:11] 
+INFO [2025-03-31 11:19:11] $filename
+INFO [2025-03-31 11:19:11] NULL
+INFO [2025-03-31 11:19:11] 
+INFO [2025-03-31 11:19:11] $output
+INFO [2025-03-31 11:19:11] [1] FALSE
+INFO [2025-03-31 11:19:11] 
+INFO [2025-03-31 11:19:11] $fill
+INFO [2025-03-31 11:19:11] c("#d9042b", "#5e606c")
+INFO [2025-03-31 11:19:11] 

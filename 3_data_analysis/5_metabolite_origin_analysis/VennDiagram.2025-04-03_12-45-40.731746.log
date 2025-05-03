@@ -1,0 +1,16 @@
+INFO [2025-04-03 12:45:40] $x
+INFO [2025-04-03 12:45:40] list(human_metabolite, bacteria_metabolite, environment_metabolite)
+INFO [2025-04-03 12:45:40] 
+INFO [2025-04-03 12:45:40] $category.names
+INFO [2025-04-03 12:45:40] c("Human", "Bacteria", "Environment")
+INFO [2025-04-03 12:45:40] 
+INFO [2025-04-03 12:45:40] $filename
+INFO [2025-04-03 12:45:40] NULL
+INFO [2025-04-03 12:45:40] 
+INFO [2025-04-03 12:45:40] $output
+INFO [2025-04-03 12:45:40] [1] FALSE
+INFO [2025-04-03 12:45:40] 
+INFO [2025-04-03 12:45:40] $fill
+INFO [2025-04-03 12:45:40] c(metabolite_source_color["Human"], metabolite_source_color["Bacteria"], 
+INFO [2025-04-03 12:45:40]     metabolite_source_color["Enviornment"])
+INFO [2025-04-03 12:45:40] 

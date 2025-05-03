@@ -1,0 +1,15 @@
+INFO [2025-03-15 12:33:01] $x
+INFO [2025-03-15 12:33:01] list(identified_up_marker, up_marker)
+INFO [2025-03-15 12:33:01] 
+INFO [2025-03-15 12:33:01] $category.names
+INFO [2025-03-15 12:33:01] c("Identified", "All Up metabolic features")
+INFO [2025-03-15 12:33:01] 
+INFO [2025-03-15 12:33:01] $filename
+INFO [2025-03-15 12:33:01] NULL
+INFO [2025-03-15 12:33:01] 
+INFO [2025-03-15 12:33:01] $output
+INFO [2025-03-15 12:33:01] [1] FALSE
+INFO [2025-03-15 12:33:01] 
+INFO [2025-03-15 12:33:01] $fill
+INFO [2025-03-15 12:33:01] c("#d9042b", "#5e606c")
+INFO [2025-03-15 12:33:01] 
