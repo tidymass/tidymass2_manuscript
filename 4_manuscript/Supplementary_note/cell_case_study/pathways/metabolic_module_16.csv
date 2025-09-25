@@ -1,0 +1,3 @@
+"pathway_id","pathway_name","p_value_adjust","mapped_id"
+"hsa00140","Steroid hormone biosynthesis",3.86999927779471e-17,"C00280;C00674;C00523;C01227;C03772;C04295;C05139;C05290;C05140;C04555;C11135;C18045"
+"hsa04913","Ovarian steroidogenesis",0.00847813643190611,"C00280;C01227;C04295"

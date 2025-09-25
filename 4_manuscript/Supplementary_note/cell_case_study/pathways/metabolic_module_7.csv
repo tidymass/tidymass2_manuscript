@@ -1,0 +1,3 @@
+"pathway_id","pathway_name","p_value_adjust","mapped_id"
+"hsa00900","Terpenoid backbone biosynthesis",1.84080059155918e-06,"C00448;C16826;C01126;C03461;C20121"
+"hsa00100","Steroid biosynthesis",0.0204225537315019,"C00448;C00751;C03428"

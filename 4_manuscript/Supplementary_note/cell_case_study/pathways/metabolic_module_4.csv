@@ -1,0 +1,3 @@
+"pathway_id","pathway_name","p_value_adjust","mapped_id"
+"hsa00120","Primary bile acid biosynthesis",3.80328104506909e-06,"C04554;C04722;C05454;C05455;C01301;C05452;C05445;C05444;C05451;C05453"
+"hsa01040","Biosynthesis of unsaturated fatty acids",0.0115642618483762,"C01530;C08281;C08320;C08316;C16527;C16526;C08323;C16533"

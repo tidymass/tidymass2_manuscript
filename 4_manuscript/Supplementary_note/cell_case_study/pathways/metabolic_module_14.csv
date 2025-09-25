@@ -1,0 +1,3 @@
+"pathway_id","pathway_name","p_value_adjust","mapped_id"
+"hsa00480","Glutathione metabolism",6.10298008296923e-05,"C00051;C02090;C16566;C16567;C05730"
+"hsa04976","Bile secretion",0.000243151674969329,"C02465;C00051;C01921;C05122;C01996;C00486;C05963"
