@@ -57,7 +57,7 @@ object_pos2 <-
     rt.match.tol = 30,
     polarity = "positive",
     column = "rp",
-    database = gnps_ms2,
+    database = mpsnyder_rplc_ms2,
     based_on = c("ms1", "ms2"),
     adduct.table = NULL
   )
